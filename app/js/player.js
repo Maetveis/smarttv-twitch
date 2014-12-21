@@ -9,6 +9,8 @@ var Player = new function() {
 	var retryCount = 0;
 	var maxRetries = 3;
 
+	var isBuffering = false;
+
 	/**
 	 * Initializes the player component using, the element with given ID.
 	 * Switches Player to fullscren mode and binds most events.
@@ -22,54 +24,87 @@ var Player = new function() {
 
 		player.OnConnectionFailed = function() {
 			if (++retryCount < maxRetries) {
-				alert('Player.retry(' + retryCount + ', ' + maxRetries + ')');
+				Log.warn('Player.retry(' + retryCount + ', ' + maxRetries + ')');
 				self.play(url);
 			}
 			else {
-				alert('Player.onError(connection)');
+				Log.error('Player.onError(connection)');
+
+				signalBufferingEnd();
+
 				self.stop();
 				self.onError('connection');
 			};
 		};
 
 		player.OnNetworkDisconnected = function() {
-			alert('Player.onError(network)');
+			Log.error('Player.onError(network)');
+
+			signalBufferingEnd();
+
+			self.stop();
 			self.onError('network');
 		};
 
 		player.OnRenderError = function() {
-			alert('Player.onError(renderer)');
+			Log.error('Player.onError(renderer)');
+
+			signalBufferingEnd();
+
+			self.stop();
 			self.onError('renderer');
 		};
 
 		player.OnAuthenticationFailed = function() {
-			alert('Player.onError(authentication)');
+			Log.error('Player.onError(authentication)');
+
+			signalBufferingEnd();
+
+			self.stop();
 			self.onError('authentication');
 		};
 
 		player.OnStreamNotFound = function() {
-			alert('Player.onError(notfound)');
+			Log.error('Player.onError(notfound)');
+
+			signalBufferingEnd();
+
+			self.stop();
 			self.onError('notfound');
 		};
 
 		player.OnRenderingComplete = function() {
-			alert('Player.onCompleted()');
+			Log.debug('Player.onCompleted()');
+
+			self.stop();
 			self.onCompleted();
 		};
 
 		player.OnBufferingStart = function() {
-			alert('Player.onBufferingStarted()');
+			Log.debug('Player.onBufferingStarted()');
+
+			isBuffering = true;
 			self.onBufferingStarted();
 		};
 
 		player.OnBufferingComplete = function() {
-			alert('Player.onBufferingEnded()');
-			retryCount = 0; 
-			self.onBufferingEnded();
+			Log.debug('Player.onBufferingEnded()');
+
+			signalBufferingEnd();
 		};
 
+		function signalBufferingEnd() {
+			if (isBuffering) {
+				isBuffering = false;
+				self.onBufferingEnded();
+			}
+		}
+		
 		player.OnBufferingProgress = function (progress) { 
-			alert('Player.onBufferingProgress('+ progress +')');
+			retryCount = 0; 
+			isBuffering = true;
+
+			Log.debug('Player.onBufferingProgress('+ progress +')');
 			self.onBufferingProgress(progress);
 		};
 	};
@@ -82,7 +117,7 @@ var Player = new function() {
 		self.stop();
 
 		url = source;
-		alert('Player.play('+ source +')');
+		Log.debug('Player.play('+ source +')');
 		player.Play(url);
 		player.SetDisplayArea(0, 0, 960, 540);
 	}
@@ -91,7 +126,7 @@ var Player = new function() {
 	 * Stops current playback if there is any
 	 */
 	this.stop = function() {
-		alert('Player.stop()');
+		Log.debug('Player.stop()');
 
 		retryCount = 0; 
 		player.Stop();

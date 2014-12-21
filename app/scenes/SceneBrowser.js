@@ -160,7 +160,7 @@ var SceneSceneBrowser = function(options) {
 		
 		var element = $('#thumbnail_' + cursorY + '_' + cursorX).addClass('stream_thumbnail_focused');
 		var tableElement = $('#stream_table');
-		tableElement.css({'marginTop': parseInt(tableElement.css('marginTop')) - element.offset().top + 90});
+		tableElement.css({'marginTop': (parseInt(tableElement.css('marginTop')) - element.offset().top + 90) + 'px'});
 
 		if (!dataEnded && (cursorY + 5 > itemsCount / COLUMN_COUNT)) {
 			loadData();
@@ -175,8 +175,7 @@ var SceneSceneBrowser = function(options) {
 	}
 
 	function clean() {
-		$('#stream_table').css({'marginTop': 0});
-		$('#stream_table').empty();
+		$('#stream_table').empty().css({'marginTop': '0px'});
 		itemsCount = 0;
 		cursorX = 0;
 		cursorY = 0;

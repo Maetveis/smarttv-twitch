@@ -1,3 +1,9 @@
+#stream_table {
+	width: 100%; 
+	border: 0; 
+	table-layout: fixed;
+}
+
 td.stream_cell {
 	padding: 6px;
 	position: relative;

@@ -1,4 +1,6 @@
 var Language = new function() {
+	var widgetAPI = new Common.API.Widget();
+
 	/**
 	 * Applies language to all available html elements, using LanguageStrings.
 	 * 
@@ -19,7 +21,10 @@ var Language = new function() {
 			var prefixKey = prefix + '_' + key;
 			var value = strings[key];
 			if (typeof value == 'string' || value instanceof String) {
-				$('.label' + prefixKey).html(value)
+				$('.label' + prefixKey).each(function(index, element) {
+					// http://www.samsungdforum.com/Guide/art00044/index.html
+					widgetAPI.putInnerHTML(element, value);
+				});
 			} 
 			else { // assume object
 				applyRecursive(prefixKey, value);

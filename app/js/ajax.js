@@ -78,24 +78,30 @@ var Ajax = new function() {
 			}
 		};
 
-		if (!stealth) {
-			xhr.onloadstart = function() { 
-				alert('AJAXS('+retryCount+','+dataType+'): ' + url); 
+		xhr.onloadstart = function() { 
+			Log.debug('AJAXS('+retryCount+','+dataType+'): ' + url); 
+			if (!stealth) {
 				Status.signalStart(); 
-			};
-			
-			// https://bugs.webkit.org/show_bug.cgi?id=40952
-			// xhr.onloadend = function() { Status.signalEnd(); };
+			}
+		};
 
-			var onloadend = function() {
-				alert('AJAXE('+retryCount+','+dataType+'): ' + url);
+		// https://bugs.webkit.org/show_bug.cgi?id=40952
+		// xhr.onloadend = function() { Status.signalEnd(); };
+		var onloadend = function() {
+			Log.debug('AJAXE('+retryCount+','+dataType+'): ' + url);
+			if (!stealth) {
 				Status.signalEnd();
-			};
-			
-			xhr.onload = onloadend;
-			xhr.onerror = onloadend;
-			xhr.onabort = onloadend;
-		}
+			}
+
+			// it's 99.9% undefined, but lets try it
+			if (xhr.destroy) {
+				xhr.destroy();
+			}
+		};
+
+		xhr.onload = onloadend;
+		xhr.onerror = onloadend;
+		xhr.onabort = onloadend;
 
 		xhr.onreadystatechange = function() {
 			if (xhr.readyState == 4 && xhr.status == 200 && xhr.responseText != null) { 
@@ -107,10 +113,11 @@ var Ajax = new function() {
 					var response = xhr.responseText;
 					if (dataType == 'json') {
 						try {
-								response = $.parseJSON(response);
+							response = $.parseJSON(response);
 						}
 						catch (e) {
 							error('json');
+							return;
 						}
 					}
 

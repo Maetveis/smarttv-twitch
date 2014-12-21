@@ -45,7 +45,7 @@ var Configuration = new function() {
 			}
 		}
 		catch(e) {
-			alert('Error while accessing user configuration: ' + e);
+			Log.warn('Can\'t access user configuration: ' + e);
 		}
 	};
 	

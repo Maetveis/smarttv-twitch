@@ -43,7 +43,6 @@ var Status = new function() {
 		if (--counter == 0) {
 			setThrobberVisible(false);
 		}
-		//alert('counter/signalEnd: ' + counter);
 	};
 
 	function setThrobberVisible(visible) {
@@ -70,6 +69,8 @@ var Status = new function() {
 		if (msg.length > 0) {
 			// start cleaning timer only if there actually is a message
 			messageCleanerTimeout = setTimeout(function() { setMessage(''); }, MESSAGE_CLEAR_TIMEOUT);
+
+			Log.log(msg);
 		}
 	};
 

@@ -23,8 +23,6 @@ function onStart () {
 		Player.init('pluginObjectPlayer');
 
 		Player.onError = function(status) {
-			Player.onCompleted();
-
 			var message = 'Unexpected error';
 			switch (status) {
 				case 'connection':
@@ -55,8 +53,6 @@ function onStart () {
 		};
 
 		Player.onCompleted = function() { 
-			Player.stop();
-
 			Nav.back();
 		};
 
